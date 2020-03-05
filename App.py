@@ -161,7 +161,6 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
     :param out_path_dir: save download files
     :return: no this !!!
     """
-    print(lst_download_links_dict)
     if not os.path.exists(out_path_dir):
         os.mkdir(out_path_dir)
     for download_item in lst_download_links_dict:
