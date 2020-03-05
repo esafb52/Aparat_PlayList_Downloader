@@ -1,13 +1,14 @@
 # Aparat_PlayList_Downloader
-- this is simple aparat play list downloader using playlist code
+- this is simple script for download aparat playlist 
 - this app work tow mode : online and offline mode
 - offline mode just for get playlist links work
   and for generate download link you need connect to internet  
   
   
-  ### usage example:
-<code> python app.py -code="131231" -out="d:\aparat"</code>
-
-  ### offline usage example:
- <code> python app.py -code="131231" file="play.html" -online="n"  -out="d:\aparat"</code>   
+ ### online usage example:
+- if your playlist address is : 
+<pre>[https://www.aparat.com/playlist/251724]</pre>
+<pre><code> python app.py -code="251724" -out="d:\aparat"</code></pre>
+ ### offline usage example:
+ <pre><code> python app.py -code="251724" file="play.html" -online="n"  -out="d:\aparat"</code></pre>   
  
