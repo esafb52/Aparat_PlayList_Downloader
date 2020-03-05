@@ -5,7 +5,7 @@
   and for generate download link you need connect to internet  
   
   
- ### online usage example:
+  ### usage example:
 - if your playlist address is : 
 <pre>[https://www.aparat.com/playlist/251724]</pre>
 <pre><code> python app.py -code="251724" -out="d:\aparat"</code></pre>
