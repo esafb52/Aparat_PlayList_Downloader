@@ -169,7 +169,7 @@ def log_content_to_txt_file(lst_links_text, my_file):
     :return: none
     """
     ls = list(lst_links_text)
-    with open(os.path.join(my_file), 'w', encoding="utf-8")as f:
+    with open(my_file, 'w', encoding="utf-8")as f:
         for item in ls:
             if item is not None:
                 f.write(item + "\n")
