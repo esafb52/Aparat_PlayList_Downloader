@@ -76,6 +76,8 @@ def get_episode_links_online(lst_web_content):
     counter = 0
     for episode_link in lst_web_content:
         try:
+            if episode_link is None:
+                continue
             file_name, download_link = generate_final_link_and_name(episode_link)
             if lst_duplicate_link.count(file_name) > 0:
                 continue
