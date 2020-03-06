@@ -15,4 +15,4 @@
 <pre><code>  pyinstaller --onefile --ico=aparat.ico --name=aparat.exe App.py </code></pre>
 
  **and then use in cmd :**
-<pre><code>  App.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out="d:\media"</code></pre>
+<pre><code>  aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out="d:\media"</code></pre>

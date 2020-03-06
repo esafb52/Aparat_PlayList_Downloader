@@ -19,8 +19,11 @@ LINE_SEP = "<@@@>"
 def usage():
     return """
         use example :>
-        app.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
-        app.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849" 
+        python App.py -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
+        python App.py -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849"  or
+        for aparat.exe in cmd:
+        aparat.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
+        aparat.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849" 
         out dir is optional parm and also The default quality is 720.
     """
 
