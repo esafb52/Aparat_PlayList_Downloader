@@ -13,7 +13,8 @@ PLAYLIST_CODE = ""
 PLAYLIST_URL = ""
 OUT_PATH_DIR = ""
 OFFLINE_HTML_FILE = ""
-
+LOG_FILE_FOR_LINKS = "download_links.txt"
+LOG_FILE_FOR_NAME = "download_file_names.txt"
 # for separate saving name and link in txt file
 LINE_SEP = "<@@@>"
 
@@ -89,8 +90,8 @@ def get_episode_links_online(lst_web_content):
         except Exception as e:
             print(e)
     lst_pure_links = [link['link'] for link in lst_download_links]
-    log_content_to_txt_file(lst_pure_links, "download_links.txt")
-    log_content_to_txt_file(lst_file_names, "download_file_names.txt")
+    log_content_to_txt_file(lst_pure_links, LOG_FILE_FOR_LINKS)
+    log_content_to_txt_file(lst_file_names, LOG_FILE_FOR_NAME)
     return lst_download_links
 
 
@@ -151,8 +152,8 @@ def generate_episode_links_from_html_file(playlist_links):
         except Exception as e:
             print(e, episode_link)
     lst_pure_links = [link['link'] for link in lst_download_links]
-    log_content_to_txt_file(lst_pure_links, "download_links.txt")
-    log_content_to_txt_file(lst_file_names, "download_file_names.txt")
+    log_content_to_txt_file(lst_pure_links, LOG_FILE_FOR_LINKS)
+    log_content_to_txt_file(lst_file_names, LOG_FILE_FOR_NAME)
     return lst_download_links
 
 
@@ -230,7 +231,7 @@ def start_online_mode():
     if lst_links:
         print("start download files !!! \n")
         download_play_list_files(lst_links, OUT_PATH_DIR)
-        rename_download_files_to_persian_name("download_file_names.txt", OUT_PATH_DIR)
+        rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, OUT_PATH_DIR)
         print("end downloads !!!")
 
 
@@ -241,7 +242,7 @@ def start_offline_mode():
     if lst_download_link:
         print("start download files !!! \n")
         download_play_list_files(lst_download_link, OUT_PATH_DIR)
-        rename_download_files_to_persian_name("download_file_names.txt", OUT_PATH_DIR)
+        rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, OUT_PATH_DIR)
         print("end downloads !!!")
 
 
