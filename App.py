@@ -8,10 +8,7 @@ import re
 
 BASE_URL = "https://www.aparat.com"
 HEADERS = {'user-agent': 'Mozilla/6.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Chrome/66'}
-
-PLAYLIST_CODE = ""
-PLAYLIST_URL = ""
-OUT_PATH_DIR = ""
+OUT_DIR_PATH = ""
 OFFLINE_HTML_FILE = ""
 LOG_FILE_FOR_LINKS = "download_links.txt"
 LOG_FILE_FOR_NAME = "download_file_names.txt"
@@ -22,71 +19,51 @@ LINE_SEP = "<@@@>"
 def usage():
     return """
         use example :>
-        for online mode :
-        app.exe -code="117849" or
-        app.exe -code="117849" -out="d:\\117849" 
-        for offline mode :
-        App.exe -code="110553"  -file="ss.html -online=n"
-        App.exe -code="110553"  -file="ss.html" -out="d:\\110553" 
+        app.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
+        app.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849" 
         out dir is optional parm and also The default quality is 720.
     """
 
 
-def get_all_links_online(url):
+def get_all_playlist_episode_links_and_titles_online(url):
     """
     get all a tag by request playlist url
-    :param url: play list link such as https://www.aparat.com/playlist/288572
+    :param url: play list link such as https://www.aparat.com/v/VgFSr?playlist=110553
     :return: request result form url
     """
     res = req.get(url).content
-    links = BeautifulSoup(res, 'html.parser')
-    ls = links.find_all('a')
+    links = BeautifulSoup(res, 'html.parser').find_all('div', attrs={'class': 'playlist-body'})[0]
+    playlist_links = links.find_all('a', attrs={'class': 'title'})
     lst_res = []
-    for item in ls:
-        link = (item.get('href'))
-        if '/v/' in link and 'playlist={0}'.format(PLAYLIST_CODE) in link:
-            lst_res.append(link)
+    for item in playlist_links:
+        item_link = BASE_URL + (item.get('href'))
+        item_name = (item.get('title'))
+        lst_res.append({"filename": item_name, "link": item_link})
     return lst_res
 
 
-def generate_final_link_and_name(episode_link):
-    """
-    generate final download file link and name
-    :param episode_link:
-    :return: simple_name and file_name and also download_link contain dict
-    """
-    episode_url = BASE_URL + episode_link
-    download_link = generate_episode_download_link(episode_url)
-    file_name = str(os.path.basename(download_link['link']))
-    simple_name = file_name.split('-')[0]
-    return simple_name, download_link
-
-
-def get_episode_links_online(lst_web_content):
+def get_all_episode_download_links_online(lts_all_episode_links):
     """
     generate base link for each episode in playlist  as list links form lst_web_content
-    :param lst_web_content:request result
+    :param lts_all_episode_links:request result
     :return: list of item contain dict name and txt links of episodes
     """
-    if not len(lst_web_content) > 0:
+    if not len(lts_all_episode_links) > 0:
         print('not found any links !!!')
         return
-    lst_duplicate_link = []
     lst_download_links = []
     lst_file_names = []
     counter = 0
-    for episode_link in lst_web_content:
+    for episode_link in lts_all_episode_links:
         try:
-            if episode_link is None:
-                continue
-            file_name, download_link = generate_final_link_and_name(episode_link)
-            if lst_duplicate_link.count(file_name) > 0:
-                continue
-            lst_download_links.append(download_link)
-            lst_duplicate_link.append(file_name)
-            lst_file_names.append(file_name + LINE_SEP + download_link['filename'])
+            link = episode_link['link']
+            web_file_title = episode_link['filename']
+            download_link_info = generate_episode_mp4_file_link_and_name(link)
+            file_name = download_link_info['filename']
+            lst_download_links.append(download_link_info)
+            lst_file_names.append(file_name + LINE_SEP + web_file_title)
             counter += 1
-            print("{0} :> add to download list :> {1}".format(counter, download_link['link']))
+            print("{0} :> add to download list :> {1}".format(counter, link))
         except Exception as e:
             print(e)
     lst_pure_links = [link['link'] for link in lst_download_links]
@@ -95,66 +72,24 @@ def get_episode_links_online(lst_web_content):
     return lst_download_links
 
 
-def generate_episode_download_link(url):
+def generate_episode_mp4_file_link_and_name(url):
     """
     generate episode mp4 file link form apart site by quality
     start form 720p and end with 1080p (1080p is end because for large size)
     :param url: episode url link
     :return: list contain dict for files with name and url of file
     """
+    quality_range = ('720p', '480p', '360p', '240p', '1080p')
     request_res = req.get(url, headers=HEADERS)
     final_links = BeautifulSoup(request_res.content, "html.parser")
-    file_name = str(final_links.title.text).strip().replace('  ', '')
-    all_links = final_links.find_all('a')
-    quality_range = ('720p', '480p', '360p', '240p', '1080p')
+    all_links = final_links.find_all('div', attrs={'class': "dropdown-content"})[0].find_all('a')
     for file_quality in quality_range:
         for my_link in all_links:
-            result_link_end = str(my_link.get('href'))
-            if result_link_end.endswith('.mp4') and file_quality in result_link_end:
-                return {"filename": file_name, "link": result_link_end}
-    return None
-
-
-def get_all_links_from_html_file(html_file):
-    link_pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-    with open(html_file, 'r', encoding="utf-8")as f:
-        html_content = f.read()
-        lst_links = re.findall(link_pattern, html_content)
-        lst_final_links = [link for link in lst_links if PLAYLIST_CODE in link]
-    return lst_final_links
-
-
-def generate_episode_links_from_html_file(playlist_links):
-    """
-    generate list of episode playlist links form apart site
-    :return: list txt links of episode playlist
-    """
-    lst_duplicate_link = []
-    lst_download_links = []
-    lst_file_names = []
-    counter = 0
-    for episode_link in playlist_links:
-        try:
-            if episode_link.startswith("http") and "playlist" in episode_link:
-                download_link = generate_episode_download_link(episode_link)
-                if download_link is None:
-                    continue
-                farsi_name = download_link['filename']
-                file_name = str(os.path.basename(download_link['link']))
-                fix_file_name = file_name.split('-')[0]
-                if fix_file_name is None or lst_duplicate_link.count(fix_file_name) > 0:
-                    continue
-                lst_duplicate_link.append(fix_file_name)
-                lst_download_links.append(download_link)
-                lst_file_names.append(fix_file_name + LINE_SEP + farsi_name)
-                counter += 1
-                print(counter, " file found :> ", download_link['link'])
-        except Exception as e:
-            print(e, episode_link)
-    lst_pure_links = [link['link'] for link in lst_download_links]
-    log_content_to_txt_file(lst_pure_links, LOG_FILE_FOR_LINKS)
-    log_content_to_txt_file(lst_file_names, LOG_FILE_FOR_NAME)
-    return lst_download_links
+            file_link = str(my_link.get('href'))
+            file_name = generate_simple_file_name(file_link)
+            if file_quality in file_link:
+                return {"filename": file_name, "link": file_link}
+    return {"filename": None, "link": None}
 
 
 def download_play_list_files(lst_download_links_dict, out_path_dir):
@@ -166,13 +101,15 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
     """
     if not os.path.exists(out_path_dir):
         os.mkdir(out_path_dir)
+        counter = 0
     for download_item in lst_download_links_dict:
         try:
             if download_item is not None:
                 url_link = download_item["link"]
                 file_final_path = os.path.join(out_path_dir, os.path.basename(url_link).split('-')[0] + '.mp4')
                 if not os.path.exists(file_final_path):
-                    print("download start : " + url_link)
+                    counter += 1
+                    print("{0} :> download start : {1} ".format(counter, url_link))
                     wget.download(url_link, file_final_path)
                     sleep(2)
                 else:
@@ -183,7 +120,7 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
             print(e, download_item["filename"])
 
 
-def remove_extra_char_in_persian_name(farsi_name):
+def clean_persian_name_from_extra_char(farsi_name):
     """
     remove extra char for farsi name
     :param farsi_name:
@@ -197,12 +134,23 @@ def remove_extra_char_in_persian_name(farsi_name):
         print('invalid name !!!')
 
 
+def generate_simple_file_name(episode_link):
+    """
+    generate final download file name
+    :param episode_link:
+    :return: simple_name and file_name
+    """
+    file_name = str(os.path.basename(episode_link))
+    simple_name = file_name.split('-')[0]
+    return simple_name
+
+
 def rename_download_files_to_persian_name(txt_file, dir_path):
     file = open(txt_file, 'r', encoding='utf-8')
     lst_file_names = file.readlines()
     for item in lst_file_names:
         english_name, farsi_name = item.split(LINE_SEP)
-        final_farsi_name = remove_extra_char_in_persian_name(farsi_name)
+        final_farsi_name = clean_persian_name_from_extra_char(farsi_name)
         current_file_name = os.path.join(dir_path, english_name + '.mp4')
         if os.path.exists(current_file_name):
             os.rename(current_file_name, os.path.join(dir_path, final_farsi_name))
@@ -218,52 +166,29 @@ def log_content_to_txt_file(lst_links_text, my_file):
     :return: none
     """
     ls = list(lst_links_text)
-    with open(my_file, 'w', encoding="utf-8")as f:
+    with open(os.path.join(my_file), 'w', encoding="utf-8")as f:
         for item in ls:
             if item is not None:
                 f.write(item + "\n")
 
 
-def start_online_mode():
-    print("start generate download links online")
-    web_req_result = get_all_links_online(PLAYLIST_URL)
-    lst_links = get_episode_links_online(web_req_result)
-    if lst_links:
-        print("start download files !!! \n")
-        download_play_list_files(lst_links, OUT_PATH_DIR)
-        rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, OUT_PATH_DIR)
-        print("end downloads !!!")
-
-
-def start_offline_mode():
-    print("start generate download links form file")
-    lst_links = get_all_links_from_html_file(OFFLINE_HTML_FILE)
-    lst_download_link = generate_episode_links_from_html_file(lst_links)
-    if lst_download_link:
-        print("start download files !!! \n")
-        download_play_list_files(lst_download_link, OUT_PATH_DIR)
-        rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, OUT_PATH_DIR)
-        print("end downloads !!!")
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog="Aparat PlayList Downloader", usage=usage())
-    parser.add_argument("-online", metavar='online', type=str, default="y", help="online or offline mode")
-    parser.add_argument("-file", metavar='file', type=str, help="input html file")
-    parser.add_argument("-code", metavar='code', type=str, help="playlist code")
+    parser.add_argument("-url", metavar='url', type=str, help="playlist url ")
     parser.add_argument("-out", metavar='out', type=str, help=" output folder to save files")
     args = parser.parse_args()
-    if args.code is None and args.file is None:
-        usage()
-    if args.out is None:
-        args.out = os.getcwd()
-    OUT_PATH_DIR = os.path.join(args.out, "{0}_Aparat_Files".format(args.code))
-    if args.online == "y":
-        PLAYLIST_CODE = args.code
-        PLAYLIST_URL = BASE_URL + "/playlist/" + PLAYLIST_CODE
-        start_online_mode()
+    if args.url is not None:
+        if args.out is None:
+            args.out = os.getcwd()
+        playlist_code = str(args.url).split('=')[1]
+        out_dir_path = os.path.join(args.out, "{0}_Aparat_Files".format(playlist_code))
+        PLAYLIST_URL = args.url
+        print("start generate download links")
+        web_req_result = get_all_playlist_episode_links_and_titles_online(PLAYLIST_URL)
+        lst_links = get_all_episode_download_links_online(web_req_result)
+        print("start download files !!! \n")
+        download_play_list_files(lst_links, out_dir_path)
+        rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, out_dir_path)
+        print("end downloads !!!")
     else:
-        PLAYLIST_CODE = args.code
-        PLAYLIST_URL = BASE_URL + "/playlist/" + PLAYLIST_CODE
-        OFFLINE_HTML_FILE = args.file
-        start_offline_mode()
+        usage()
