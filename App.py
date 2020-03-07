@@ -45,19 +45,16 @@ def get_all_playlist_episode_links_and_titles_online(url):
     return lst_res
 
 
-def get_all_episode_download_links_online(lts_all_episode_links):
+def get_all_episode_download_links_online(lts_episode_links):
     """
     generate base link for each episode in playlist  as list links form lst_web_content
-    :param lts_all_episode_links:request result
+    :param lts_episode_links:request result
     :return: list of item contain dict name and txt links of episodes
     """
-    if not len(lts_all_episode_links) > 0:
-        print('not found any links !!!')
-        return
     lst_download_links = []
     lst_file_names = []
     counter = 0
-    for episode_link in lts_all_episode_links:
+    for episode_link in lts_episode_links:
         try:
             link = episode_link['link']
             web_file_title = episode_link['filename']
