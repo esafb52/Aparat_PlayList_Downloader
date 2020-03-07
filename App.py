@@ -57,7 +57,8 @@ def get_all_episode_download_links(lts_episode_links):
     lst_pure_links = [link['link'] for link in lst_download_links]
     log_content_to_txt_file(lst_pure_links, LOG_FILE_FOR_LINKS)
     log_content_to_txt_file(lst_file_names, LOG_FILE_FOR_NAME)
-    return lst_download_links
+    lst_download_links_final = list(filter(lambda item: item['link'] != '', lst_download_links))
+    return lst_download_links_final
 
 
 def generate_episode_mp4_file_link_and_name(url):
@@ -92,19 +93,16 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
         counter = 0
     for download_link in lst_download_links_dict:
         try:
-            if download_link is not None:
-                url_link = download_link["link"]
-                file_name = generate_simple_file_name(url_link) + '.mp4'
-                file_final_path = os.path.join(out_path_dir, file_name)
-                if not os.path.exists(file_final_path):
-                    counter += 1
-                    print("{0} :> download start : {1} ".format(counter, url_link))
-                    wget.download(url_link, file_final_path)
-                    sleep(2)
-                else:
-                    print(download_link["filename"] + ' file already exists')
+            url_link = download_link["link"]
+            file_name = generate_simple_file_name(url_link) + '.mp4'
+            file_final_path = os.path.join(out_path_dir, file_name)
+            if not os.path.exists(file_final_path):
+                counter += 1
+                print("{0} :> download start : {1} ".format(counter, url_link))
+                wget.download(url_link, file_final_path)
+                sleep(2)
             else:
-                print('bad file ', download_link)
+                print(download_link["filename"] + ' file already exists')
         except Exception as e:
             print(e, download_link["filename"])
 
