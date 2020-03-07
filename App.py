@@ -16,7 +16,7 @@ LOG_FILE_FOR_NAME = "download_file_names.txt"
 LINE_SEP = "<@@@>"
 
 
-def get_all_playlist_episode_links_and_titles_online(url):
+def get_all_playlist_episode_links_and_titles(url):
     """
     get all a tag by request playlist url
     :param url: play list link such as https://www.aparat.com/v/VgFSr?playlist=110553
@@ -33,7 +33,7 @@ def get_all_playlist_episode_links_and_titles_online(url):
     return lst_res
 
 
-def get_all_episode_download_links_online(lts_episode_links):
+def get_all_episode_download_links(lts_episode_links):
     """
     generate base link for each episode in playlist  as list links form lst_web_content
     :param lts_episode_links:request result
@@ -135,6 +135,12 @@ def generate_simple_file_name(episode_link):
 
 
 def rename_download_files_to_persian_name(txt_file, dir_path):
+    """
+    rename download file to file title in page for better using
+    :param txt_file: txt file contain file names use LOG_FILE_FOR_NAME
+    :param dir_path: dir path that contain download playlist file
+    :return: not things
+    """
     if os.path.isfile(txt_file):
         file = open(txt_file, 'r', encoding='utf-8')
         lst_file_names = file.readlines()
@@ -171,9 +177,10 @@ if __name__ == '__main__':
     parser.add_argument("-out", type=str, help=" output folder to save download files ")
     args = parser.parse_args()
     if args.url is None:
-        print("use : aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553")
+        print('usage example:')
+        print("aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553")
         print('or')
-        print("use : aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out=d:\\117849")
+        print("python App.py -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out=d:\\117849")
     else:
         if args.out is None:
             args.out = os.getcwd()
@@ -181,8 +188,8 @@ if __name__ == '__main__':
         out_dir_path = os.path.join(args.out, "{0}_Aparat_Files".format(playlist_code))
         PLAYLIST_URL = args.url
         print("start generate download links")
-        web_req_result = get_all_playlist_episode_links_and_titles_online(PLAYLIST_URL)
-        lst_links = get_all_episode_download_links_online(web_req_result)
+        web_req_result = get_all_playlist_episode_links_and_titles(PLAYLIST_URL)
+        lst_links = get_all_episode_download_links(web_req_result)
         print("start download files !!! \n")
         download_play_list_files(lst_links, out_dir_path)
         rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, out_dir_path)
