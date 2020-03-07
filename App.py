@@ -81,10 +81,10 @@ def generate_episode_mp4_file_link_and_name(url):
     """
     quality_range = ('720p', '480p', '360p', '240p', '1080p')
     request_res = req.get(url, headers=HEADERS)
-    final_links = BeautifulSoup(request_res.content, "html.parser")
-    all_links = final_links.find_all('div', attrs={'class': "dropdown-content"})[0].find_all('a')
+    soup_result = BeautifulSoup(request_res.content, "html.parser")
+    final_links_result = soup_result.find_all('div', attrs={'class': "dropdown-content"})[0].find_all('a')
     for file_quality in quality_range:
-        for my_link in all_links:
+        for my_link in final_links_result:
             file_link = str(my_link.get('href'))
             file_name = generate_simple_file_name(file_link)
             if file_quality in file_link:
