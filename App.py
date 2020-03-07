@@ -16,18 +16,6 @@ LOG_FILE_FOR_NAME = "download_file_names.txt"
 LINE_SEP = "<@@@>"
 
 
-def usage():
-    return """
-        use example :>
-        python App.py -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
-        python App.py -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849"  or
-        for aparat.exe in cmd:
-        aparat.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" or
-        aparat.exe -url="https://www.aparat.com/v/VgFSr?playlist=110553" -out="d:\\117849" 
-        out dir is optional parm and also The default quality is 720.
-    """
-
-
 def get_all_playlist_episode_links_and_titles_online(url):
     """
     get all a tag by request playlist url
@@ -178,11 +166,15 @@ def log_content_to_txt_file(lst_links_text, my_file):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog="Aparat PlayList Downloader", usage=usage())
+    parser = argparse.ArgumentParser(prog="Aparat PlayList Downloader")
     parser.add_argument("-url", type=str, help="playlist url you want to download !!! ")
-    parser.add_argument("-out", type=str, help=" output folder to save download files")
+    parser.add_argument("-out", type=str, help=" output folder to save download files ")
     args = parser.parse_args()
-    if args.url is not None:
+    if args.url is None:
+        print("use : aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553")
+        print('or')
+        print("use : aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out=d:\\117849")
+    else:
         if args.out is None:
             args.out = os.getcwd()
         playlist_code = str(args.url).split('=')[1]
@@ -195,5 +187,3 @@ if __name__ == '__main__':
         download_play_list_files(lst_links, out_dir_path)
         rename_download_files_to_persian_name(LOG_FILE_FOR_NAME, out_dir_path)
         print("end downloads !!!")
-    else:
-        usage()
