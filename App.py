@@ -168,11 +168,14 @@ def log_content_to_txt_file(lst_links_text, my_file):
     :param my_file:file name
     :return: none
     """
-    ls = list(lst_links_text)
-    with open(my_file, 'w', encoding="utf-8")as f:
-        for item in ls:
-            if item is not None:
-                f.write(item + "\n")
+    try:
+        ls = list(lst_links_text)
+        with open(my_file, 'w', encoding="utf-8")as f:
+            for item in ls:
+                if item is not None:
+                    f.write(item + "\n")
+    except Exception as e:
+        print("error {0}".format(e))
 
 
 if __name__ == '__main__':
