@@ -148,16 +148,17 @@ def generate_simple_file_name(episode_link):
 
 
 def rename_download_files_to_persian_name(txt_file, dir_path):
-    file = open(txt_file, 'r', encoding='utf-8')
-    lst_file_names = file.readlines()
-    for item in lst_file_names:
-        english_name, farsi_name = item.split(LINE_SEP)
-        final_farsi_name = clean_persian_name_from_extra_char(farsi_name)
-        current_file_name = os.path.join(dir_path, english_name + '.mp4')
-        if os.path.exists(current_file_name):
-            os.rename(current_file_name, os.path.join(dir_path, final_farsi_name))
-        else:
-            print(english_name + "  not find  !!!!!!!!!! ")
+    if os.path.isfile(txt_file):
+        file = open(txt_file, 'r', encoding='utf-8')
+        lst_file_names = file.readlines()
+        for item in lst_file_names:
+            english_name, farsi_name = item.split(LINE_SEP)
+            final_farsi_name = clean_persian_name_from_extra_char(farsi_name)
+            current_file_name = os.path.join(dir_path, english_name + '.mp4')
+            if os.path.exists(current_file_name):
+                os.rename(current_file_name, os.path.join(dir_path, final_farsi_name))
+            else:
+                print(english_name + "  not find  !!!!!!!!!! ")
 
 
 def log_content_to_txt_file(lst_links_text, my_file):
