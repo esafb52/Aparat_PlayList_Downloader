@@ -180,8 +180,8 @@ def log_content_to_txt_file(lst_links_text, my_file):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog="Aparat PlayList Downloader", usage=usage())
-    parser.add_argument("-url", metavar='url', type=str, help="playlist url ")
-    parser.add_argument("-out", metavar='out', type=str, help=" output folder to save files")
+    parser.add_argument("-url", type=str, help="playlist url you want to download !!! ")
+    parser.add_argument("-out", type=str, help=" output folder to save download files")
     args = parser.parse_args()
     if args.url is not None:
         if args.out is None:
