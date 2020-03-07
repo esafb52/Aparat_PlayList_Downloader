@@ -1,10 +1,11 @@
-from bs4 import BeautifulSoup
-from time import sleep
-import requests as req
 import argparse
-import wget
 import os
 import re
+from time import sleep
+
+import requests as req
+import wget
+from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.aparat.com"
 HEADERS = {'user-agent': 'Mozilla/6.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Chrome/66'}
@@ -102,22 +103,23 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
     if not os.path.exists(out_path_dir):
         os.mkdir(out_path_dir)
         counter = 0
-    for download_item in lst_download_links_dict:
+    for download_link in lst_download_links_dict:
         try:
-            if download_item is not None:
-                url_link = download_item["link"]
-                file_final_path = os.path.join(out_path_dir, os.path.basename(url_link).split('-')[0] + '.mp4')
+            if download_link is not None:
+                url_link = download_link["link"]
+                file_name = generate_simple_file_name(url_link) + '.mp4'
+                file_final_path = os.path.join(out_path_dir, file_name)
                 if not os.path.exists(file_final_path):
                     counter += 1
                     print("{0} :> download start : {1} ".format(counter, url_link))
                     wget.download(url_link, file_final_path)
                     sleep(2)
                 else:
-                    print(download_item[" filename "] + 'is exists')
+                    print(download_link["filename"] + ' file already exists')
             else:
-                print('bad file ', download_item)
+                print('bad file ', download_link)
         except Exception as e:
-            print(e, download_item["filename"])
+            print(e, download_link["filename"])
 
 
 def clean_persian_name_from_extra_char(farsi_name):
