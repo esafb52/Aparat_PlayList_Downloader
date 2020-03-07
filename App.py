@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 BASE_URL = "https://www.aparat.com"
 HEADERS = {'user-agent': 'Mozilla/6.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Chrome/66'}
 OUT_DIR_PATH = ""
-OFFLINE_HTML_FILE = ""
 LOG_FILE_FOR_LINKS = "download_links.txt"
 LOG_FILE_FOR_NAME = "download_file_names.txt"
 # for separate saving name and link in txt file
