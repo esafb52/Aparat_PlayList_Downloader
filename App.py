@@ -34,8 +34,8 @@ def get_all_playlist_episode_links_and_titles_online(url):
     :param url: play list link such as https://www.aparat.com/v/VgFSr?playlist=110553
     :return: request result form url
     """
-    res = req.get(url).content
-    links = BeautifulSoup(res, 'html.parser').find_all('div', attrs={'class': 'playlist-body'})[0]
+    res = req.get(url, headers=HEADERS)
+    links = BeautifulSoup(res.content, 'html.parser').find_all('div', attrs={'class': 'playlist-body'})[0]
     playlist_links = links.find_all('a', attrs={'class': 'title'})
     lst_res = []
     for item in playlist_links:
