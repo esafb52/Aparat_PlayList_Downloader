@@ -57,7 +57,7 @@ def get_all_episode_download_links(lts_episode_links):
     lst_pure_links = [link['link'] for link in lst_download_links]
     log_content_to_txt_file(lst_pure_links, LOG_FILE_FOR_LINKS)
     log_content_to_txt_file(lst_file_names, LOG_FILE_FOR_NAME)
-    lst_download_links_final = list(filter(lambda item: item['link'] != '', lst_download_links))
+    lst_download_links_final = list(filter(lambda item: item['link'] is not None, lst_download_links))
     return lst_download_links_final
 
 
@@ -90,7 +90,7 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
     """
     if not os.path.exists(out_path_dir):
         os.mkdir(out_path_dir)
-        counter = 0
+    counter = 0
     for download_link in lst_download_links_dict:
         try:
             url_link = download_link["link"]
@@ -139,7 +139,7 @@ def rename_download_files_to_persian_name(txt_file, dir_path):
     :param dir_path: dir path that contain download playlist file
     :return: not things
     """
-    if os.path.isfile(txt_file):
+    if os.path.exists(txt_file):
         file = open(txt_file, 'r', encoding='utf-8')
         lst_file_names = file.readlines()
         for item in lst_file_names:
