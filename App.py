@@ -40,8 +40,7 @@ def get_all_episode_download_links(lts_episode_links):
     """
     lst_download_links = []
     lst_file_names = []
-    counter = 0
-    for episode_link in lts_episode_links:
+    for counter, episode_link in enumerate(lts_episode_links, start=1):
         try:
             link = episode_link['link']
             web_file_title = episode_link['filename']
@@ -49,7 +48,6 @@ def get_all_episode_download_links(lts_episode_links):
             file_name = download_link_info['filename']
             lst_download_links.append(download_link_info)
             lst_file_names.append(file_name + LINE_SEP + web_file_title)
-            counter += 1
             print("{0} :> add to download list :> {1}".format(counter, link))
         except Exception as e:
             print(e)
@@ -89,14 +87,12 @@ def download_play_list_files(lst_download_links_dict, out_path_dir):
     """
     if not os.path.exists(out_path_dir):
         os.mkdir(out_path_dir)
-    counter = 0
-    for download_link in lst_download_links_dict:
+    for counter, download_link in enumerate(lst_download_links_dict, start=1):
         try:
             url_link = download_link["link"]
             file_name = generate_simple_file_name(url_link) + '.mp4'
             file_final_path = os.path.join(out_path_dir, file_name)
             if not os.path.exists(file_final_path):
-                counter += 1
                 print("{0} :> download start : {1} ".format(counter, url_link))
                 wget.download(url_link, file_final_path)
                 sleep(2)
