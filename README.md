@@ -16,3 +16,7 @@
 
  **and then use in cmd :**
 <pre><code>  aparat.exe -url=https://www.aparat.com/v/VgFSr?playlist=110553 -out="d:\media"</code></pre>
+
+## TODO
+- [ ] add gui interface by pyQt5
+- [ ] download multi threading item in list

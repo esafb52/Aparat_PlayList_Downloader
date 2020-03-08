@@ -1,11 +1,10 @@
+from bs4 import BeautifulSoup
+from time import sleep
+import requests as req
 import argparse
 import os
 import re
-from time import sleep
-
-import requests as req
 import wget
-from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.aparat.com"
 HEADERS = {'user-agent': 'Mozilla/6.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Chrome/66'}
